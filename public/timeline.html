@@ -1,0 +1,31 @@
+<div class="clearfix">
+	<form ng-Submit="posting()" ng-show="auth" enctype="multipart/form-data">
+		<h4>{{cur_user.username}} says</h4>
+		<textarea required class="form-control" maxlength="200" rows="3" placeholder="Say something" ng-model="newPost.message"></textarea>
+		<div ng-hide="filePath == ''">
+			<img class="imgBorder" src="{{filePath}}">
+		</div>
+		<div class="btn submit-btn" ngf-select="upload($file)">Upload image</div>
+	<input class="btn submit-btn pull-right" type="submit" value="Tweet!" />
+  </form>
+	<div id='feed'>
+		<h4>Tweet Feed</h4>
+		<p>Sort by: <select  ng-model="data.model">
+			<option ng-repeat="option in data.availableOptions" value="{{option.val}}">{{option.name}}</option>
+		</select></p>
+		<div class="feed" ng-repeat="post in posts | orderBy: data.model:true" ng-class-odd="'odd'" ng-class-even="'even'" >
+			<p>{{post.message}}</p>
+			<div ng-hide="post.imgPath==''">
+				<img class ="imgBorder" src="{{post.imgPath}}" >
+			</div>
+			<div class="col">
+		        <small class="created">
+		        	Posted by @{{post.created_by.username}} IP: {{post.post_ip}}
+		        	<span  class="heart" ng-click="auth && like(post)" ng-style="heart(post)" ng-disabled="auth"></span>
+	        	</small>
+		        <small class="likeCount" ng-click="likeIp(post)">{{post.like}}</small>
+		        <small class="pull-right">{{post.created_at | date:"h:mma 'on' MMM d, y"}}</small>
+		    </div>
+		</div>
+	</div>
+</div>

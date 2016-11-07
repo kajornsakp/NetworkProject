@@ -1,0 +1,26 @@
+<html>
+	<head>
+		<title>Tweet</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-resource.js"></script>
+		<script type="text/javascript" src="javascripts/ng-file-upload.min.js"></script>
+		<script type="text/javascript" src="javascripts/tweetApp.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		<link rel="stylesheet" href="stylesheets/style.css">
+	</head>
+	<body ng-app="tweetApp">
+		<nav class="navbar-fluid navbar-default navbar-fixed-top">
+	        <div class="container">
+				<a class="navbar-brand" href="#/"> Tweet! </a>
+				<p class="navbar-right navbar-text" ng-hide="auth"><a href="#/login">Login</a> or <a href="#/signup">Register</a></p>
+				<p class="navbar-right navbar-text" ng-show="auth"><a href="#" ng-click="logout()">Logout</a></p>
+				<p class="navbar-right navbar-text" ng-show="auth">Signed in as {{cur_user.username}}</p>
+	        </div>
+      	</nav>
+		<div class="col-md-offset-2 col-md-8">
+    		<div ng-view>
+    		</div>
+		</div>	
+	</body>
+</html>
