@@ -134,6 +134,7 @@ router.route('/posts/:id')
 		comment.save(function(err, comment){
 			if(err)
 				return res.send(err);
+			//kuy
 			req.post.comment.push(comment);
 			req.post.save(function(err, post){
 				if(err)
