@@ -32,7 +32,19 @@ app.factory('postService', function($resource){
 			});
 });
 
-app.controller('mainController', function($scope,Upload , $rootScope, postService, $http){
+app.factory('socket', function($rootScope) {
+  var socket = io.connect();
+  return {
+    on: function(eventName, callback){
+      socket.on(eventName, callback);
+    },
+    emit: function(eventName, data) {
+      socket.emit(eventName, data);
+    }
+  };
+});
+
+app.controller('mainController', function($scope,Upload , $rootScope, postService, $http, socket){
 	$scope.posts = postService.query();
 	$scope.newPost = {message: '',imgPath: '',post_ip : '',created_by: {username: '',password: ''}, created_at: ''};
 	$scope.filePath = "";
@@ -44,7 +56,9 @@ app.controller('mainController', function($scope,Upload , $rootScope, postServic
 	    ]
    	};
   
-	console.log($scope.data.model);
+	socket.on('notification', function(){
+		$scope.posts = postService.query();
+	});
 
 	$scope.upload = function (file) {
         Upload.upload({
@@ -65,8 +79,9 @@ app.controller('mainController', function($scope,Upload , $rootScope, postServic
 		postService.save($scope.newPost, function(){
 			$scope.posts = postService.query();
 			$scope.newPost = {message: '',imgPath:'', created_by: '', created_at: ''};
-			$scope.filePath = ""
+			$scope.filePath = "";
 		});
+		socket.emit('post');
 	};
 
 	$scope.heart = function(post){
@@ -75,16 +90,14 @@ app.controller('mainController', function($scope,Upload , $rootScope, postServic
 			if(index == -1)
 				return {'background-position': 'left'};
 			return {'background-position': 'right'};
-			
 		}
 	};
 
 	$scope.likeIp = function(post){
 		$http.get('/api/likepost/'+post._id).success(function(data){
-			var temp =''
+			var temp ='';
 			for(i in data){
-				if(i != 0)
-					temp += data[i].user.username+": "+data[i].likeIp + '\n';
+				temp += data[i].user.username+": "+data[i].likeIp + '\n';	
 			}
 			window.alert(temp);
 		});
@@ -92,7 +105,6 @@ app.controller('mainController', function($scope,Upload , $rootScope, postServic
 
 	$scope.like = function($post){
 		postService.update({id:$post._id},$rootScope.cur_user,function(data){
-			console.log(data);
 			$rootScope.cur_user = data;	
 		});
 		var index = $rootScope.cur_user.likePost.indexOf($post._id);
@@ -105,6 +117,7 @@ app.controller('mainController', function($scope,Upload , $rootScope, postServic
 				$post.like -= 1;
 			}
 		}
+		socket.emit('post');
 	};
 });
 

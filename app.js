@@ -9,6 +9,10 @@ var passport = require('passport');
 require('./models/models');
 var app = express();
 var mongoose = require('mongoose');
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+
 mongoose.connect('mongodb://localhost/tweet');
 
 
@@ -45,6 +49,20 @@ app.use(function(req, res, next) {
 //// Initialize Passport
 var initPassport = require('./passport_init');
 initPassport(passport);
+
+
+////socket
+
+io.on('connection', function(socket) {
+  console.log('new connection');
+  socket.on('post', function() {
+    io.emit('notification');
+  });
+});
+
+server.listen(3000, function(){
+    console.log('server listen to port 3000');
+});
 
 // error handlers
 
